@@ -29,7 +29,7 @@ export function ContinueWithEmailForm() {
         type="email"
         name="email"
         id="magic-link"
-        className="mb-1 w-full rounded border border-gray-500 px-2 py-1 text-lg"
+        className="mb-1 w-full rounded border border-gray-500 px-2 py-1 text-lg text-slate-800"
         disabled={isLoading}
       />
       <div

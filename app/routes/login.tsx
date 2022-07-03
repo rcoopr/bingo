@@ -21,6 +21,8 @@ import { createAuthSession, getAuthSession } from "~/core/auth/session.server";
 import { ContinueWithEmailForm } from "~/core/components";
 import { assertIsPost } from "~/core/utils/http.server";
 
+import { BxLeftArrowAlt } from "../core/components/svg/bx-left-arrow-alt";
+
 export const loader: LoaderFunction = async ({ request }) => {
   const authSession = await getAuthSession(request);
 
@@ -102,19 +104,16 @@ export default function LoginPage() {
   }, [actionData]);
 
   return (
-    <div className="flex min-h-full flex-col justify-center">
+    <div className="flex min-h-screen flex-col justify-center">
+      <Link to="/">
+        <div className="absolute top-6 left-6 rounded-full p-2 text-slate-400 hover:bg-slate-200/10 hover:text-slate-300">
+          <BxLeftArrowAlt width={32} height={32} />
+        </div>
+      </Link>
       <div className="mx-auto w-full max-w-md px-8">
-        <Form
-          method="post"
-          className="space-y-6"
-          ref={formRef}
-          replace
-        >
+        <Form method="post" className="space-y-6" ref={formRef} replace>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium">
               Email address
             </label>
 
@@ -129,14 +128,11 @@ export default function LoginPage() {
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className="w-full rounded border border-gray-500 px-2 py-1 text-lg text-slate-800"
                 disabled={disabled}
               />
               {actionData?.errors?.email && (
-                <div
-                  className="pt-1 text-red-700"
-                  id="email-error"
-                >
+                <div className="pt-1 text-red-700" id="email-error">
                   {actionData.errors.email}
                 </div>
               )}
@@ -144,10 +140,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="block text-sm font-medium">
               Password
             </label>
             <div className="mt-1">
@@ -159,25 +152,18 @@ export default function LoginPage() {
                 autoComplete="new-password"
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className="w-full rounded border border-gray-500 px-2 py-1 text-lg text-slate-800"
                 disabled={disabled}
               />
               {actionData?.errors?.password && (
-                <div
-                  className="pt-1 text-red-700"
-                  id="password-error"
-                >
+                <div className="pt-1 text-red-700" id="password-error">
                   {actionData.errors.password}
                 </div>
               )}
             </div>
           </div>
 
-          <input
-            type="hidden"
-            name="redirectTo"
-            value={redirectTo}
-          />
+          <input type="hidden" name="redirectTo" value={redirectTo} />
           <button
             type="submit"
             className="w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
@@ -186,7 +172,7 @@ export default function LoginPage() {
             Log in
           </button>
           <div className="flex items-center justify-center">
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-slate-400">
               Don't have an account?{" "}
               <Link
                 className="text-blue-500 underline"
@@ -202,13 +188,12 @@ export default function LoginPage() {
         </Form>
         <div className="mt-6">
           <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+            <div className="absolute inset-0 flex items-center justify-between">
+              <div className="w-1/4 border-t border-gray-300" />
+              <div className="w-1/4 border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-2 text-gray-500">
-                Or continue with
-              </span>
+              <span className="px-2 text-slate-400">Or continue with</span>
             </div>
           </div>
           <div className="mt-6">
