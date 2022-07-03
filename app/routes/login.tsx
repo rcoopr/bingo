@@ -26,7 +26,7 @@ import { BxLeftArrowAlt } from "../core/components/svg/bx-left-arrow-alt";
 export const loader: LoaderFunction = async ({ request }) => {
   const authSession = await getAuthSession(request);
 
-  if (authSession) return redirect("/notes");
+  if (authSession) return redirect("/manage");
 
   return json({});
 };
@@ -61,7 +61,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const { email, password, redirectTo = "/notes" } = formValidation.data;
+  const { email, password, redirectTo = "/manage" } = formValidation.data;
 
   const authSession = await signInWithEmail(email, password);
 

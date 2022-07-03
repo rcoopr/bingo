@@ -18,7 +18,7 @@ import { getUserByEmail } from "~/modules/user/queries";
 export const loader: LoaderFunction = async ({ request }) => {
   const authSession = await getAuthSession(request);
 
-  if (authSession) return redirect("/notes");
+  if (authSession) return redirect("/manage");
 
   return json({});
 };
@@ -52,9 +52,9 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const { redirectTo, ...authSession } = form.data;
-  const safeRedirectTo = safeRedirect(redirectTo, "/notes");
+  const safeRedirectTo = safeRedirect(redirectTo, "/manage");
 
-  // user have un account, skip creation part and just commit session
+  // user have an account, skip creation part and just commit session
   if (await getUserByEmail(authSession.email)) {
     return redirect(safeRedirectTo, {
       headers: {
@@ -90,7 +90,7 @@ export default function LoginCallback() {
   const error = useActionData() as ActionData;
   const fetcher = useFetcher();
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") ?? "/notes";
+  const redirectTo = searchParams.get("redirectTo") ?? "/manage";
 
   useEffect(() => {
     const supabase = getSupabaseClient();
