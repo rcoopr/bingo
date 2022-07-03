@@ -14,6 +14,7 @@ import {
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
+import { Toaster } from "react-hot-toast";
 
 import { SupabaseRealtimeProvider } from "./core/integrations/supabase/realtime-context";
 import { SUPABASE_ANON_PUBLIC, SUPABASE_URL } from "./core/utils/env.server";
@@ -64,6 +65,7 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full">
+        <Toaster position="bottom-right" />
         <SupabaseRealtimeProvider>
           <main className="relative min-h-screen bg-gradient-to-br from-slate-900 to-slate-700 text-slate-300">
             <div

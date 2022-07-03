@@ -38,6 +38,7 @@
     "@supabase/supabase-js": "^1.35.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hot-toast": "^2.2.0",
     "remix-params-helper": "^0.4.9",
     "remix-utils": "^3.3.0",
     "tiny-invariant": "^1.2.0",
