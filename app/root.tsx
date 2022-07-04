@@ -52,7 +52,7 @@ export const loader: LoaderFunction = async ({ request }) =>
     },
   });
 
-const txPaths = ["/notes", "/", "/manage", "/browse"];
+const txPaths = ["/"];
 
 export default function App() {
   const { ENV } = useLoaderData() as Window;

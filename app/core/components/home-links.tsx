@@ -26,11 +26,11 @@ const LoginLinks = () => (
 const HomeNavLinks = () => (
   <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0">
     <Link
-      to="/manage"
+      to="/games"
       prefetch="intent"
       className="flex items-center justify-center rounded-md border-2 border-cyan-500 px-4 py-3 font-medium text-white hover:text-cyan-500"
     >
-      Manage
+      Create
     </Link>
     <Link
       to="/create"

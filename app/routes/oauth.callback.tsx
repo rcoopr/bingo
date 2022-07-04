@@ -13,12 +13,14 @@ import { assertIsPost, safeRedirect } from "~/core/utils/http.server";
 import { tryCreateUser } from "~/modules/user/mutations";
 import { getUserByEmail } from "~/modules/user/queries";
 
+const redirectPath = "/games";
+
 // imagine a user go back after OAuth login success or type this URL
 // we don't want him to fall in a black hole 👽
 export const loader: LoaderFunction = async ({ request }) => {
   const authSession = await getAuthSession(request);
 
-  if (authSession) return redirect("/manage");
+  if (authSession) return redirect(redirectPath);
 
   return json({});
 };
@@ -52,7 +54,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const { redirectTo, ...authSession } = form.data;
-  const safeRedirectTo = safeRedirect(redirectTo, "/manage");
+  const safeRedirectTo = safeRedirect(redirectTo, redirectPath);
 
   // user have an account, skip creation part and just commit session
   if (await getUserByEmail(authSession.email)) {
@@ -90,7 +92,7 @@ export default function LoginCallback() {
   const error = useActionData() as ActionData;
   const fetcher = useFetcher();
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") ?? "/manage";
+  const redirectTo = searchParams.get("redirectTo") ?? redirectPath;
 
   useEffect(() => {
     const supabase = getSupabaseClient();

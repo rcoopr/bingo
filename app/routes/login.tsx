@@ -23,10 +23,12 @@ import { assertIsPost } from "~/core/utils/http.server";
 
 import { BxLeftArrowAlt } from "../core/components/svg/bx-left-arrow-alt";
 
+const redirectPath = "/games";
+
 export const loader: LoaderFunction = async ({ request }) => {
   const authSession = await getAuthSession(request);
 
-  if (authSession) return redirect("/manage");
+  if (authSession) return redirect(redirectPath);
 
   return json({});
 };
@@ -61,7 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const { email, password, redirectTo = "/manage" } = formValidation.data;
+  const { email, password, redirectTo = redirectPath } = formValidation.data;
 
   const authSession = await signInWithEmail(email, password);
 
