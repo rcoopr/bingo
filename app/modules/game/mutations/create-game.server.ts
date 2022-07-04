@@ -6,7 +6,7 @@ export async function createGame({
   startDate,
   endDate,
   userId,
-}: Pick<Game, "title" | "startDate" | "endDate"> & {
+}: Pick<Game, "title" | "description" | "startDate" | "endDate"> & {
   userId: User["id"];
 }) {
   return db.game.create({
