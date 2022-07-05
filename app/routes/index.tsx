@@ -40,7 +40,7 @@ export default function Index() {
                   ...new Array(10).fill(0).map((_, i) => (
                     <div
                       key={i}
-                      className="rounded bg-slate-100/20 p-2 text-white"
+                      className="rounded bg-slate-300 p-2 dark:bg-slate-100/20"
                     >
                       {i}
                     </div>
