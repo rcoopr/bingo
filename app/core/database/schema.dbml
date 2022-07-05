@@ -1,0 +1,198 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Project "Bingo" {
+  database_type: 'PostgreSQL'
+  Note: ''
+}
+
+Table Game {
+  id Int [pk, increment]
+  boards Board [not null]
+  teams Team [not null]
+  title String [not null]
+  description String
+  startDate DateTime [not null]
+  endDate DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Board {
+  id Int [pk, increment]
+  game Game [not null]
+  gameId Int [not null]
+  teamBoards TeamBoard [not null]
+  tiles Tile [not null]
+}
+
+Table Team {
+  id Int [pk, increment]
+  game Game [not null]
+  gameId Int [not null]
+  teamBoards TeamBoard [not null]
+  players Player [not null]
+  name String [not null]
+  description String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table TeamBoard {
+  id Int [pk, increment]
+  teamTile TeamTile [not null]
+  team Team [not null]
+  teamId Int [not null]
+  board Board [not null]
+  boardId Int [not null]
+}
+
+Table Tile {
+  id Int [pk, increment]
+  teamTiles TeamTile [not null]
+  board Board [not null]
+  boardId Int [not null]
+  tasks Task [not null]
+  points Int [not null]
+}
+
+Table TeamTile {
+  id Int [pk, increment]
+  teamBoard TeamBoard [not null]
+  teamBoardId Int [not null]
+  tile Tile [not null]
+  tileId Int [not null]
+  teamTasks TeamTask [not null]
+  status TileStatus [not null]
+}
+
+Table Player {
+  id Int [pk, increment]
+  user User [not null]
+  userId String [not null]
+  team Team [not null]
+  teamId Int [not null]
+  submissions Submission [not null]
+  role Role [not null]
+  joinedAd DateTime [not null]
+}
+
+Table User {
+  id String [pk]
+  players Player [not null]
+  email String [unique, not null]
+  username String [unique]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  tasks Task [not null]
+}
+
+Table Task {
+  id Int [pk, increment]
+  taskTags TaskTag [not null]
+  taskDetails TaskDetail [not null]
+  teamTasks TeamTask [not null]
+  Tile Tile
+  tileId Int
+  user User [not null]
+  userId String [not null]
+  totalProgress Int [not null]
+}
+
+Table TaskTag {
+  id Int [pk, increment]
+  task Task [not null]
+  taskId Int [not null]
+  tag Tag [not null]
+  tagId Int [not null]
+}
+
+Table Tag {
+  id Int [pk, increment]
+  taskTags TaskTag [not null]
+}
+
+Table TeamTask {
+  id Int [pk, increment]
+  task Task [not null]
+  taskId Int [not null]
+  teamTiles TeamTile [not null]
+  submisisons Submission [not null]
+}
+
+Table TaskDetail {
+  id Int [pk, increment]
+  task Task [not null]
+  taskId Int [not null]
+  parentId Int [unique]
+  parent TaskDetail
+  child TaskDetail
+  Submission Submission [not null]
+}
+
+Table Submission {
+  id Int [pk, increment]
+  teamTask TeamTask [not null]
+  teamTaskId Int [not null]
+  player Player [not null]
+  playerId Int [not null]
+  taskDetail TaskDetail [not null]
+  taskDetailId Int [not null]
+}
+
+Table TeamTaskToTeamTile {
+  teamtasksId Int [ref: > TeamTask.id]
+  teamtilesId Int [ref: > TeamTile.id]
+}
+
+Enum TileStatus {
+  INCOMPLETE
+  IN_PROGRESS
+  COMPLETE
+  INVALID
+}
+
+Enum Role {
+  OWNER
+  ADMIN
+  PLAYER
+}
+
+Ref: Board.gameId > Game.id [delete: Cascade]
+
+Ref: Team.gameId > Game.id [delete: Cascade]
+
+Ref: TeamBoard.teamId > Team.id [delete: Cascade]
+
+Ref: TeamBoard.boardId > Board.id [delete: Cascade]
+
+Ref: Tile.boardId > Board.id [delete: Cascade]
+
+Ref: TeamTile.teamBoardId > TeamBoard.id [delete: Cascade]
+
+Ref: TeamTile.tileId > Tile.id [delete: Cascade]
+
+Ref: Player.userId > User.id [delete: Cascade]
+
+Ref: Player.teamId > Team.id [delete: Cascade]
+
+Ref: Task.tileId > Tile.id
+
+Ref: Task.userId > User.id [delete: Cascade]
+
+Ref: TaskTag.taskId > Task.id [delete: Cascade]
+
+Ref: TaskTag.tagId > Tag.id [delete: Cascade]
+
+Ref: TeamTask.taskId > Task.id [delete: Cascade]
+
+Ref: TaskDetail.taskId > Task.id [delete: Cascade]
+
+Ref: TaskDetail.parentId - TaskDetail.id
+
+Ref: Submission.teamTaskId > TeamTask.id [delete: Cascade]
+
+Ref: Submission.playerId > Player.id [delete: Cascade]
+
+Ref: Submission.taskDetailId > TaskDetail.id [delete: Cascade]

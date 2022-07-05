@@ -14,11 +14,6 @@ export async function createGame({
       title,
       startDate,
       endDate,
-      user: {
-        connect: {
-          id: userId,
-        },
-      },
     },
   });
 }

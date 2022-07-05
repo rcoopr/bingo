@@ -8,33 +8,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  username  String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  notes     Note[]
-  games     Game[]
-  tasks     Task[]
-}
-
-model Note {
-  id        String   @id @default(cuid())
-  title     String
-  body      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId    String
+generator dbml {
+  provider            = "prisma-dbml-generator"
+  output              = "./"
+  outputName          = "schema.dbml"
+  projectName         = "Bingo"
+  projectDatabaseType = "PostgreSQL"
 }
 
 model Game {
-  id          String   @id @default(cuid())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId      String
+  id          Int      @id @default(autoincrement())
+  // Relations
+  boards      Board[]
   teams       Team[]
-  tiles       Tile[]
+  // Data
   title       String
   description String?
   startDate   DateTime
@@ -43,37 +30,155 @@ model Game {
   updatedAt   DateTime @updatedAt
 }
 
+model Board {
+  id         Int         @id @default(autoincrement())
+  // Relations
+  game       Game        @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  gameId     Int // relation scalar field (used in the `@relation` attribute above)
+  teamBoards TeamBoard[]
+  tiles      Tile[]
+}
+
 model Team {
-  id          String   @id @default(cuid())
-  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  gameId      String
+  id          Int         @id @default(autoincrement())
+  // Relations
+  game        Game        @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  gameId      Int // relation scalar field (used in the `@relation` attribute above) 
+  teamBoards  TeamBoard[]
+  players     Player[]
+  // Data
   name        String
   description String?
-  competitors String[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model TeamBoard {
+  id       Int        @id @default(autoincrement())
+  // Relations
+  teamTile TeamTile[]
+  team     Team       @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamId   Int // relation scalar field (used in the `@relation` attribute above)
+  board    Board      @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  boardId  Int // relation scalar field (used in the `@relation` attribute above)
 }
 
 model Tile {
-  id         Int       @id @default(autoincrement())
-  tileTask   TileTask?
-  tileTaskId String?
-  game       Game      @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  gameId     String
+  id        Int        @id @default(autoincrement())
+  // Relations
+  teamTiles TeamTile[]
+  board     Board      @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  boardId   Int // relation scalar field (used in the `@relation` attribute above)
+  tasks     Task[]
+  // Data
+  points    Int
+}
+
+model TeamTile {
+  id          Int        @id @default(autoincrement())
+  // Relations
+  teamBoard   TeamBoard  @relation(fields: [teamBoardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamBoardId Int // relation scalar field (used in the `@relation` attribute above)
+  tile        Tile       @relation(fields: [tileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tileId      Int // relation scalar field (used in the `@relation` attribute above)
+  teamTasks   TeamTask[]
+  status      TileStatus
+}
+
+enum TileStatus {
+  INCOMPLETE
+  IN_PROGRESS
+  COMPLETE
+  INVALID
+}
+
+model Player {
+  id          Int          @id @default(autoincrement())
+  // Relations
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId      String // relation scalar field (used in the `@relation` attribute above)
+  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamId      Int
+  submissions Submission[]
+  // Data
+  role        Role
+  joinedAd    DateTime
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  PLAYER
+}
+
+model User {
+  id        String   @id @default(cuid())
+  // Relations
+  players   Player[]
+  // Data
+  email     String   @unique
+  username  String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tasks     Task[]
 }
 
 model Task {
-  id           String   @id @default(cuid())
-  title        String
-  defaultValue Int
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId       String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            Int          @id @default(autoincrement())
+  // Relations
+  taskTags      TaskTag[]
+  taskDetails   TaskDetail[]
+  teamTasks     TeamTask[]
+  Tile          Tile?        @relation(fields: [tileId], references: [id])
+  tileId        Int?
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId        String // relation scalar field (used in the `@relation` attribute above)
+  // Data
+  totalProgress Int
 }
 
-model TileTask {
-  id     String @id @default(cuid())
-  taskId String
-  value  Int
-  tile   Tile   @relation(fields: [tileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  tileId Int    @unique
+model TaskTag {
+  id     Int  @id @default(autoincrement())
+  // Relations
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  taskId Int // relation scalar field (used in the `@relation` attribute above)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tagId  Int
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  // Relations
+  taskTags TaskTag[]
+}
+
+model TeamTask {
+  id          Int          @id @default(autoincrement())
+  // Relations
+  task        Task         @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  taskId      Int // relation scalar field (used in the `@relation` attribute above)
+  teamTiles   TeamTile[]
+  submisisons Submission[]
+}
+
+model TaskDetail {
+  id         Int          @id @default(autoincrement())
+  // Relations
+  task       Task         @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  taskId     Int // relation scalar field (used in the `@relation` attribute above)
+  parentId   Int?         @unique
+  parent     TaskDetail?  @relation("TaskTier", fields: [parentId], references: [id])
+  child      TaskDetail?  @relation("TaskTier")
+  Submission Submission[]
+}
+
+model Submission {
+  id           Int        @id @default(autoincrement())
+  // Relations
+  teamTask     TeamTask   @relation(fields: [teamTaskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamTaskId   Int // relation scalar field (used in the `@relation` attribute above)
+  player       Player     @relation(fields: [playerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  playerId     Int // relation scalar field (used in the `@relation` attribute above)
+  taskDetail   TaskDetail @relation(fields: [taskDetailId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  taskDetailId Int // relation scalar field (used in the `@relation` attribute above)
 }

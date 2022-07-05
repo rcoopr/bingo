@@ -1,11 +1,9 @@
-import type { Game, User } from "~/core/database";
+import type { Game } from "~/core/database";
 import { db } from "~/core/database";
 
-export async function deleteGame({
-  id,
-  userId,
-}: Pick<Game, "id"> & { userId: User["id"] }) {
+// Used to contain userId, is it necesary?
+export async function deleteGame({ id }: Pick<Game, "id">) {
   return db.game.deleteMany({
-    where: { id, userId },
+    where: { id },
   });
 }
