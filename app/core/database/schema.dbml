@@ -75,7 +75,7 @@ Table Player {
   teamId Int [not null]
   submissions Submission [not null]
   role Role [not null]
-  joinedAd DateTime [not null]
+  joinedAt DateTime [not null]
 }
 
 Table User {

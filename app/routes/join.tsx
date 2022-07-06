@@ -17,12 +17,10 @@ import { getFormData, useFormInputProps } from "remix-params-helper";
 import { z } from "zod";
 
 import { createAuthSession, getAuthSession } from "~/core/auth/session.server";
-import { ContinueWithEmailForm } from "~/core/components";
+import { ContinueWithEmailForm, BxLeftArrowAlt } from "~/core/components";
 import { assertIsPost } from "~/core/utils/http.server";
 import { createUserAccount } from "~/modules/user/mutations";
 import { getUserByEmail } from "~/modules/user/queries";
-
-import { BxLeftArrowAlt } from "../core/components/svg/bx-left-arrow-alt";
 
 const redirectPath = "/games";
 

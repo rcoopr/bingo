@@ -18,10 +18,8 @@ import { z } from "zod";
 
 import { signInWithEmail } from "~/core/auth/mutations";
 import { createAuthSession, getAuthSession } from "~/core/auth/session.server";
-import { ContinueWithEmailForm } from "~/core/components";
+import { BxLeftArrowAlt, ContinueWithEmailForm } from "~/core/components";
 import { assertIsPost } from "~/core/utils/http.server";
-
-import { BxLeftArrowAlt } from "../core/components/svg/bx-left-arrow-alt";
 
 const redirectPath = "/games";
 

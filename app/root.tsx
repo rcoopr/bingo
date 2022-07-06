@@ -4,7 +4,7 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   Form,
   Links,
@@ -14,19 +14,19 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useTransition,
 } from "@remix-run/react";
+import reset from "normalize.css";
 import { Toaster } from "react-hot-toast";
 
 import { getAuthSession } from "./core/auth/session.server";
-import type { ColorScheme } from "./core/cookies";
-import { getColorScheme, colorSchemeCookie } from "./core/cookies";
 import { SupabaseRealtimeProvider } from "./core/integrations/supabase/realtime-context";
 import { SUPABASE_ANON_PUBLIC, SUPABASE_URL } from "./core/utils/env.server";
+import { getThemeSession } from "./core/utils/theme.server";
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindStylesheetUrl },
+  { rel: "stylesheet", href: reset },
 ];
 
 export const meta: MetaFunction = () => ({
@@ -36,15 +36,13 @@ export const meta: MetaFunction = () => ({
 });
 
 export const action: ActionFunction = async ({ request }) => {
-  const currentColorScheme = await getColorScheme(request);
-  const newColorScheme: ColorScheme =
-    currentColorScheme === "light" ? "dark" : "light";
+  const themeSession = await getThemeSession(request);
+  themeSession.toggleTheme();
 
-  return redirect(request.url, {
-    headers: {
-      "Set-Cookie": await colorSchemeCookie.serialize(newColorScheme),
-    },
-  });
+  return json(
+    { success: true },
+    { headers: { "Set-Cookie": await themeSession.commit() } }
+  );
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -52,7 +50,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   // in dev, this is not required ???
   const authSession = await getAuthSession(request);
 
-  const colorScheme = await getColorScheme(request);
+  const themeSession = await getThemeSession(request);
+  const colorScheme = await themeSession.getTheme();
 
   return json({
     realtimeSession: {
@@ -68,11 +67,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 };
 
-const txPaths: string[] = [];
+// const txPaths: string[] = [];
 
 export default function App() {
   const { ENV, colorScheme } = useLoaderData();
-  const transition = useTransition();
+  // const transition = useTransition();
 
   return (
     <html lang="en" className="h-full">
@@ -86,8 +85,12 @@ export default function App() {
           <main className="relative min-h-screen bg-slate-100 from-slate-900 to-slate-700 text-slate-800 dark:bg-gradient-to-br dark:text-slate-300">
             <div className="absolute bottom-4 right-4 z-10">
               <Form method="post">
-                <button type="submit" className="bg-black p-6 text-cyan-600">
-                  theme
+                <button
+                  type="submit"
+                  // onClick={handleClick}
+                  className="rounded border border-slate-500 bg-slate-400 px-6 py-2 text-slate-700 shadow dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                >
+                  {colorScheme === "light" ? "→ Dark Mode" : "→ Light Mode"}
                 </button>
               </Form>
             </div>

@@ -21,7 +21,7 @@ export default function NoteIndexPage() {
 
   return (
     <div className="grid grid-flow-col gap-4">
-      <div className="flex flex-col items-center">
+      <div className="flex w-max flex-col items-start">
         <h2>Active Games</h2>
         <h2 className="text-5xl font-bold">{userGameCount}</h2>
       </div>

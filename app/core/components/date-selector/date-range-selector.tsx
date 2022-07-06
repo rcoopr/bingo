@@ -1,39 +1,78 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { DayPicker } from "react-day-picker";
-import styles from "react-day-picker/dist/style.module.css";
+import styles from "react-day-picker/dist/style.css";
 
-import { useDateRange } from "./context";
+import customStyles from "./rdp.css";
 
-const pastMonth = new Date(2020, 10, 15);
+export { DateRangeSelector };
 
-export function DateRangeSelector() {
-  const { state: range, setState: setRange } = useDateRange();
-  // const [range, setRange] = useState<DateRange | undefined>(defaultSelected);
+const today = new Date();
 
-  let footer = <p>Please pick the first day.</p>;
-  if (range?.from) {
-    if (!range.to) {
-      footer = <p>{format(range.from, "PPP")}</p>;
-    } else if (range.to) {
-      footer = (
-        <p>
-          {format(range.from, "PPP")}–{format(range.to, "PPP")}
-        </p>
-      );
-    }
-  }
-
+function DateRangeSelector({
+  range,
+  setRange,
+}: {
+  range?: DateRange;
+  setRange: (range?: DateRange) => void;
+}) {
   return (
     <DayPicker
+      // className={customStyles}
       mode="range"
-      defaultMonth={pastMonth}
+      defaultMonth={today}
       selected={range}
-      footer={footer}
+      footer={<Footer from={range?.from} to={range?.to} />}
       onSelect={setRange}
-      classNames={styles}
+      showOutsideDays
+      modifiersStyles={{
+        outside: {
+          opacity: 0.2,
+        },
+        today: {
+          fontWeight: "bold",
+        },
+      }}
     />
   );
 }
+
+DateRangeSelector.styles = styles;
+
+const Footer = ({ from, to }: { from?: Date; to?: Date }) => {
+  if (!from && !to) {
+    return (
+      <div className="mt-2 flex justify-between rounded-full border border-slate-300 bg-slate-200 px-2.5 py-0.5 font-semibold">
+        <p>Select a start date</p>
+      </div>
+    );
+  }
+
+  if (from && !to) {
+    return (
+      <div className="mt-2 flex justify-between rounded-full border border-slate-300 bg-slate-200 px-2.5 py-0.5 font-semibold">
+        <p>{format(from, "PPP")}</p>
+      </div>
+    );
+  }
+
+  if (!from && to) {
+    return (
+      <div className="mt-2 flex justify-between rounded-full border border-slate-300 bg-slate-200 px-2.5 py-0.5 font-semibold">
+        <p></p>
+        <p>-</p>
+        <p>{format(to, "PPP")}</p>;
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2 flex justify-between rounded-full border border-slate-300 bg-slate-200 px-2.5 py-0.5 font-semibold">
+      <p>{format(from!, "PPP")}</p>
+      <p>-</p>
+      <p>{format(to!, "PPP")}</p>
+    </div>
+  );
+};

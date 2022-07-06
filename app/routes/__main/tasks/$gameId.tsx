@@ -15,7 +15,7 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const { userId } = await requireAuthSession(request);
+  await requireAuthSession(request);
   invariant(params.gameId, "gameId not found");
 
   const game = await getGame({ id: Number(params.gameId) });

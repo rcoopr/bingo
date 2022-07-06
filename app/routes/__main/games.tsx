@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
-import { useLoaderData, Outlet, Link, NavLink } from "@remix-run/react";
+import { useLoaderData, Outlet, NavLink, Link } from "@remix-run/react";
 import clsx from "clsx";
 
 import { requireAuthSession } from "~/core/auth/guards";
@@ -29,8 +29,8 @@ export default function GamesPage() {
   const data = useLoaderData() as LoaderData;
 
   return (
-    <main className="flex h-full">
-      <div className="flex h-full w-80 flex-col items-center">
+    <>
+      <div className="flex h-full w-80 flex-col items-start">
         <Link
           to="new"
           className="rounded-md border-2 border-cyan-400 py-2 px-4 text-xl hover:bg-cyan-400/10"
@@ -60,9 +60,7 @@ export default function GamesPage() {
         )}
       </div>
 
-      <div className="flex-1 p-6">
-        <Outlet />
-      </div>
-    </main>
+      <Outlet />
+    </>
   );
 }

@@ -102,7 +102,7 @@ model Player {
   submissions Submission[]
   // Data
   role        Role
-  joinedAd    DateTime
+  joinedAt    DateTime
 }
 
 enum Role {
