@@ -22,6 +22,8 @@ import { assertIsPost } from "~/core/utils/http.server";
 import { createUserAccount } from "~/modules/user/mutations";
 import { getUserByEmail } from "~/modules/user/queries";
 
+import { SignInWithDiscord } from "../core/components/sign-in-discord";
+
 const redirectPath = "/games";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -196,6 +198,20 @@ export default function Join() {
             </div>
           </div>
         </Form>
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center justify-between">
+              <div className="w-1/4 border-t border-gray-300" />
+              <div className="w-1/4 border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 text-slate-400">Sign up with Discord</span>
+            </div>
+          </div>
+          <div className="mt-6">
+            <SignInWithDiscord />
+          </div>
+        </div>
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center justify-between">

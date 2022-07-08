@@ -17,6 +17,11 @@ export interface AuthSession {
   expiresAt: number;
 }
 
+export interface DiscordSession {
+  avatar: string;
+  username: string;
+}
+
 export type RealtimeAuthSession = Pick<
   AuthSession,
   "accessToken" | "expiresIn" | "expiresAt"

@@ -1,9 +1,10 @@
 import type { LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Outlet, NavLink, useLocation } from "@remix-run/react";
 import clsx from "clsx";
 
 import { requireAuthSession } from "~/core/auth/guards";
-import { LogoutButton, Breadcrumbs } from "~/core/components";
+import { LogoutButton } from "~/core/components";
 
 const tabs = [
   {
@@ -19,11 +20,23 @@ const tabs = [
 export const loader: LoaderFunction = async ({ request }) => {
   await requireAuthSession(request);
 
-  return null;
+  // const discordData = await fetch("http://discordapp.com/api/users/@me", {
+  //   method: "GET",
+  //   headers: { Authorization: `Bearer ${authSession.accessToken}` },
+  // });
+  // const rawDiscordData = await discordData.json();
+
+  // const discordSession = {
+  //   avatar: rawDiscordData.avatar,
+  //   username: rawDiscordData.username,
+  // };
+
+  return json({});
 };
 
 export default function ManagePage() {
   const { pathname } = useLocation();
+
   const activeTabIndex = tabs.findIndex(
     (tab) => pathname.split("/")[1] === tab.path
   );

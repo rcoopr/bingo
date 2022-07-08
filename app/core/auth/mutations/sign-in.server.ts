@@ -19,3 +19,23 @@ export async function sendMagicLink(email: string) {
     redirectTo: `${SERVER_URL}/oauth/callback`,
   });
 }
+
+export async function signInWithDiscord() {
+  const data = await supabaseAdmin.auth.signIn(
+    {
+      provider: "discord",
+    },
+    {
+      redirectTo: `${SERVER_URL}/oauth/callback`,
+      scopes: "identify email guilds",
+    }
+  );
+
+  // console.log(data.url);
+  // safeRedirect(data.url!);
+
+  return {
+    session: mapAuthSession(data.session),
+    data,
+  };
+}
