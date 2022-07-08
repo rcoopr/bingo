@@ -1,5 +1,7 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 
+import { isTheme, Theme } from "./theme-provider";
+
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
   throw new Error("SESSION_SECRET must be set");
@@ -21,15 +23,16 @@ export async function getThemeSession(request: Request) {
   return {
     getTheme: () => {
       const themeValue = session.get("theme");
-      return themeValue ?? null;
+      return isTheme(themeValue) ? themeValue : null;
     },
-    setTheme: (theme: ColorScheme) => session.set("theme", theme),
+    setTheme: (theme: Theme) => session.set("theme", theme),
     toggleTheme: () => {
       const themeValue = session.get("theme");
-      session.set("theme", themeValue === "dark" ? "light" : "dark");
+      session.set(
+        "theme",
+        themeValue === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
+      );
     },
     commit: () => themeStorage.commitSession(session),
   };
 }
-
-export type ColorScheme = "light" | "dark";
