@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, NavLink, useLocation } from "@remix-run/react";
+import { Outlet, NavLink, useLocation, useMatches } from "@remix-run/react";
 import clsx from "clsx";
 
 import { requireAuthSession } from "~/core/auth/guards";
@@ -17,10 +17,13 @@ const tabs = [
   },
 ];
 
+// const endpoint = "https://discord.com/api/v10";
+
 export const loader: LoaderFunction = async ({ request }) => {
   await requireAuthSession(request);
+  // const authSession = await requireAuthSession(request);
 
-  // const discordData = await fetch("http://discordapp.com/api/users/@me", {
+  // const discordData = await fetch(endpoint + "/oauth2/@me", {
   //   method: "GET",
   //   headers: { Authorization: `Bearer ${authSession.accessToken}` },
   // });
@@ -36,10 +39,20 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function ManagePage() {
   const { pathname } = useLocation();
+  const matches = useMatches();
+  console.log(matches);
 
+  const activeTab = matches.find((match) => !!match.handle?.dashboardTab);
   const activeTabIndex = tabs.findIndex(
-    (tab) => pathname.split("/")[1] === tab.path
+    (tab) => tab.title === activeTab?.handle?.dashboardTab
   );
+  const indicator =
+    activeTabIndex < 0
+      ? {
+          tx: 0,
+          opacity: 0,
+        }
+      : { tx: activeTabIndex * 100, opacity: 1 };
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -51,9 +64,10 @@ export default function ManagePage() {
               <div key={link.path} className="relative">
                 {index === 0 && (
                   <div
-                    className="absolute inset-0 z-0 rounded-md bg-sky-200 transition-transform duration-300"
+                    className="absolute inset-0 z-0 rounded-md bg-sky-200 transition-all duration-300"
                     style={{
-                      transform: `translateX(${activeTabIndex * 100}%)`,
+                      transform: `translateX(${indicator.tx}%)`,
+                      opacity: indicator.opacity,
                     }}
                   />
                 )}

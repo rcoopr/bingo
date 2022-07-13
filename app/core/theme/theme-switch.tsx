@@ -1,6 +1,6 @@
 import { useTheme, Theme } from "./theme-provider";
 
-export const ThemeSwitch = ({ on }: { on: boolean }) => {
+export const ThemeSwitch = () => {
   const [theme, setTheme] = useTheme();
 
   const toggleTheme = () => {
@@ -11,7 +11,7 @@ export const ThemeSwitch = ({ on }: { on: boolean }) => {
 
   return (
     // <button type="submit" onClick={toggleTheme}>
-    <label className="swap-rotate swap h-8 w-8">
+    <label className="swap swap-rotate h-8 w-8">
       <input
         type="checkbox"
         checked={theme === Theme.LIGHT}

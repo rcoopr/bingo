@@ -23,11 +23,11 @@ export default function Index() {
       <div className="relative mx-auto max-w-7xl pb-16 pt-8 sm:py-0 sm:px-6 lg:px-8">
         <div className="relative sm:overflow-hidden sm:rounded-2xl">
           <div className="lg:pb-18 relative px-4 py-8 sm:py-6 lg:py-8">
-            <h1 className="space-x-8 text-center text-[12vw] font-extrabold tracking-tight">
-              <span className="uppercase text-cyan-400 drop-shadow-md">
+            <h1 className="space-x-8 text-center text-[clamp(4rem,_10vw,_10rem)] font-extrabold tracking-tight">
+              <span className="uppercase text-secondary drop-shadow-md">
                 Team
               </span>
-              <span className="uppercase text-yellow-500 drop-shadow-md">
+              <span className="uppercase text-accent drop-shadow-md">
                 Bingo
               </span>
             </h1>
@@ -38,10 +38,7 @@ export default function Index() {
               <div className="flex w-full flex-col items-stretch gap-2">
                 {[
                   ...new Array(10).fill(0).map((_, i) => (
-                    <div
-                      key={i}
-                      className="rounded bg-slate-300 p-2 dark:bg-slate-100/20"
-                    >
+                    <div key={i} className="rounded bg-base-300 p-2">
                       {i}
                     </div>
                   )),

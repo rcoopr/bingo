@@ -25,17 +25,21 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>({ email, games });
 };
 
+export const handle = {
+  dashboardTab: "Games",
+  breadcrumb: () => <Link to="/dashboard">Some Route</Link>,
+};
+
 export default function GamesPage() {
   const data = useLoaderData() as LoaderData;
 
   return (
     <>
-      <div className="flex h-full w-80 flex-col items-start">
-        <Link
-          to="new"
-          className="rounded-md border-2 border-cyan-400 py-2 px-4 text-xl hover:bg-cyan-400/10"
-        >
-          + New Game
+      <div className="flex h-full w-80 flex-col items-center">
+        {/* Sidebar */}
+        <Link to="new" className="btn gap-2">
+          <span>+</span>
+          New Game
         </Link>
 
         <hr />
@@ -52,7 +56,7 @@ export default function GamesPage() {
                   }
                   to={game.id.toString()}
                 >
-                  📝 {game.title}
+                  🎮 {game.title}
                 </NavLink>
               </li>
             ))}
@@ -60,7 +64,10 @@ export default function GamesPage() {
         )}
       </div>
 
-      <Outlet />
+      {/* Main view of dashboard */}
+      <div className="m-3 mt-0 flex flex-1 flex-col rounded-lg rounded-tl-3xl bg-base-300 p-6">
+        <Outlet />
+      </div>
     </>
   );
 }

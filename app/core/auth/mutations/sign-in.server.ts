@@ -30,12 +30,11 @@ export async function signInWithDiscord() {
       scopes: "identify email guilds",
     }
   );
-
-  // console.log(data.url);
-  // safeRedirect(data.url!);
+  const oauthToken = data.session?.provider_token;
 
   return {
     session: mapAuthSession(data.session),
     data,
+    oauthToken,
   };
 }

@@ -6,7 +6,6 @@ import type {
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
-  Form,
   Links,
   LiveReload,
   Meta,
@@ -23,7 +22,6 @@ import { getAuthSession } from "./core/auth/session.server";
 import { SupabaseRealtimeProvider } from "./core/integrations/supabase/realtime-context";
 import {
   Theme,
-  Themed,
   ThemeHead,
   ThemeProvider,
   useTheme,
@@ -102,14 +100,15 @@ function App({ ENV }: Partial<LoaderData>) {
         <Links />
         <ThemeHead ssrTheme={Boolean(theme)} />
       </head>
-      <body className={clsx(theme, "h-full")}>
+      <body
+        className={clsx(theme, "h-full")}
+        data-theme={theme === Theme.LIGHT ? "winter" : "night"}
+      >
         <Toaster position="bottom-right" />
         <SupabaseRealtimeProvider>
-          <main className="relative min-h-screen bg-slate-100 from-slate-900 to-slate-700 text-slate-800 dark:bg-gradient-to-br dark:text-slate-300">
-            <div className="absolute bottom-4 right-4 z-10">
-              <ThemeSwitch on={theme === Theme.LIGHT} />
-              <Themed dark={<p>dark</p>} light={<p>light</p>} />
-              <p>{theme}</p>
+          <main className="relative min-h-screen bg-base-100 text-base-content">
+            <div className="absolute bottom-5 right-5 z-10 leading-[0]">
+              <ThemeSwitch />
             </div>
             {/* <div
               className={

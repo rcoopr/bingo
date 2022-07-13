@@ -13,8 +13,7 @@ import { commitAuthSession } from "~/core/auth/session.server";
 import { TextInput, Label, DateRangeSelector } from "~/core/components";
 import { assertIsPost } from "~/core/utils/http.server";
 import { createGame } from "~/modules/game/mutations";
-
-import customStyles from "./rdp.css";
+import customStyles from "~/styles/rdp.css";
 
 const dateSchema = z.preprocess((arg) => {
   if (typeof arg == "string" || arg instanceof Date) return new Date(arg);
