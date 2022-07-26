@@ -1,4 +1,5 @@
-import type { User } from "~/core/database";
+import type { User } from "@prisma/client";
+
 import { db } from "~/core/database";
 
 export async function getGames({ userId }: { userId: User["id"] }) {

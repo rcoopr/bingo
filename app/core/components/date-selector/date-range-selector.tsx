@@ -1,11 +1,7 @@
-import React from "react";
-
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { DayPicker } from "react-day-picker";
 import styles from "react-day-picker/dist/style.css";
-
-import customStyles from "./rdp.css";
 
 export { DateRangeSelector };
 

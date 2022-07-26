@@ -1,7 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
-import toast from "react-hot-toast";
+import { Link, Outlet } from "@remix-run/react";
 
 import { requireAuthSession } from "~/core/auth/guards";
 // import { useWatchNotes } from "~/modules/game/hooks"

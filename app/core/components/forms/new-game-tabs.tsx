@@ -1,7 +1,9 @@
+import { Link } from "@remix-run/react";
+
 export function NewGameFormTabs() {
   return (
     <div className="tabs flex h-16 w-full flex-col items-center justify-evenly md:flex-row">
-      <a className="tab tab-bordered h-full flex-grow gap-6">
+      <Link to="" className="tab tab-bordered h-full flex-grow gap-6">
         <div className="flex h-8 w-8 items-center justify-center rounded bg-indigo-700">
           <p
             tabIndex={0}
@@ -11,8 +13,11 @@ export function NewGameFormTabs() {
           </p>
         </div>
         <span>Details</span>
-      </a>
-      <a className="tab tab-active tab-bordered h-full flex-grow gap-6">
+      </Link>
+      <Link
+        to=""
+        className="tab tab-active tab-bordered h-full flex-grow gap-6"
+      >
         <div className="flex h-8 w-8 items-center justify-center rounded bg-indigo-700">
           <p
             tabIndex={0}
@@ -22,8 +27,8 @@ export function NewGameFormTabs() {
           </p>
         </div>
         <span>Tiles</span>
-      </a>
-      <a className="tab tab-bordered h-full flex-grow gap-6">
+      </Link>
+      <Link to="" className="tab tab-bordered h-full flex-grow gap-6">
         <div className="flex h-8 w-8 items-center justify-center rounded bg-indigo-700">
           <p
             tabIndex={0}
@@ -33,7 +38,7 @@ export function NewGameFormTabs() {
           </p>
         </div>
         <span>Teams</span>
-      </a>
+      </Link>
     </div>
   );
 }

@@ -1,8 +1,6 @@
-import { useState } from "react";
-
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, NavLink, useLocation, useMatches } from "@remix-run/react";
+import { NavLink, Outlet, useMatches } from "@remix-run/react";
 import clsx from "clsx";
 
 import { requireAuthSession } from "~/core/auth/guards";
@@ -41,7 +39,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function ManagePage() {
   const matches = useMatches();
-  const [sidebar, setSidebar] = useState("games");
+  // const [sidebar, setSidebar] = useState("games");
 
   const activeTab = matches.find((match) => !!match.handle?.dashboardTab);
   const activeTabIndex = tabs.findIndex(

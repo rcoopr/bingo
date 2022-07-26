@@ -1,4 +1,5 @@
-import type { Game } from "~/core/database";
+import type { Game } from "@prisma/client";
+
 import { db } from "~/core/database";
 
 // Used to contain userId, is it necesary?

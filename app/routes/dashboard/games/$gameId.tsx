@@ -1,3 +1,4 @@
+import type { Game } from "@prisma/client";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useCatch, useLoaderData } from "@remix-run/react";
@@ -5,7 +6,6 @@ import invariant from "tiny-invariant";
 
 import { requireAuthSession } from "~/core/auth/guards";
 import { commitAuthSession } from "~/core/auth/session.server";
-import type { Game } from "~/core/database";
 import { assertIsDelete } from "~/core/utils/http.server";
 import { deleteGame } from "~/modules/game/mutations";
 import { getGame } from "~/modules/game/queries";

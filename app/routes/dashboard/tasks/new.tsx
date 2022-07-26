@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useRef, useState, useEffect } from "react";
 
 import { json, redirect } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
@@ -94,9 +94,9 @@ const defaultDateRange: DateRange = {
 
 export default function NewGamePage() {
   const actionData = useActionData() as ActionData;
-  const titleRef = React.useRef<HTMLInputElement>(null);
-  const descRef = React.useRef<HTMLTextAreaElement>(null);
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
+  const titleRef = useRef<HTMLInputElement>(null);
+  const descRef = useRef<HTMLTextAreaElement>(null);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange
   );
   const inputProps = useFormInputProps(NewGameFormSchema);
@@ -104,14 +104,13 @@ export default function NewGamePage() {
   const disabled =
     transition.state === "submitting" || transition.state === "loading";
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionData?.errors?.title) {
       titleRef.current?.focus();
     } else if (actionData?.errors?.description) {
       descRef.current?.focus();
     }
   }, [actionData]);
-  console.log(dateRange);
 
   return (
     <Form method="post" className="flex w-full flex-col gap-2">

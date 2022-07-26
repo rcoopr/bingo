@@ -1,4 +1,5 @@
-import type { Game, User } from "~/core/database";
+import type { Game, User } from "@prisma/client";
+
 import { db } from "~/core/database";
 
 export async function createGame({

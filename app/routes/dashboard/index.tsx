@@ -1,30 +1,3 @@
-import { json } from "@remix-run/node";
-import type { LoaderFunction } from "@remix-run/node";
-import { useLoaderData, Outlet, NavLink, Link } from "@remix-run/react";
-import clsx from "clsx";
-
-import { requireAuthSession } from "~/core/auth/guards";
-import { notFound } from "~/core/utils/http.server";
-
-// import { getGames } from "../../modules/game/queries";
-
-// type LoaderData = {
-//   email: string;
-//   games: Awaited<ReturnType<typeof getGames>>;
-// };
-
-// export const loader: LoaderFunction = async ({ request }) => {
-//   const { userId, email } = await requireAuthSession(request);
-
-//   const games = await getGames({ userId });
-
-//   if (!games) {
-//     throw notFound(`No user with id ${userId}`);
-//   }
-
-//   return json<LoaderData>({ email, games });
-// };
-
 export default function DashboardPage() {
   // const data = useLoaderData() as LoaderData;
 
