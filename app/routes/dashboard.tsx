@@ -1,10 +1,12 @@
+import { useState } from "react";
+
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet, NavLink, useLocation, useMatches } from "@remix-run/react";
 import clsx from "clsx";
 
 import { requireAuthSession } from "~/core/auth/guards";
-import { LogoutButton } from "~/core/components";
+import { UserMenu } from "~/core/components";
 
 const tabs = [
   {
@@ -38,9 +40,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function ManagePage() {
-  const { pathname } = useLocation();
   const matches = useMatches();
-  console.log(matches);
+  const [sidebar, setSidebar] = useState("games");
 
   const activeTab = matches.find((match) => !!match.handle?.dashboardTab);
   const activeTabIndex = tabs.findIndex(
@@ -55,7 +56,7 @@ export default function ManagePage() {
       : { tx: activeTabIndex * 100, opacity: 1 };
 
   return (
-    <div className="flex h-full min-h-screen flex-col">
+    <div className="flex h-full max-h-screen min-h-screen flex-col">
       <header className="flex items-center justify-between p-4">
         <div className="px-6 text-lg uppercase">Bingo</div>
         <nav className="flex">
@@ -88,13 +89,13 @@ export default function ManagePage() {
           </div>
         </nav>
         {/* <h1 className="text-3xl font-bold capitalize">{pagename}</h1> */}
-        <LogoutButton />
+        <UserMenu />
       </header>
       {/* min height at least the height of Breadcrumbs title + crumbs so no content shift when no crumbs exist */}
       {/* <div className="flex min-h-[3.75rem] justify-between">
         <Breadcrumbs />
       </div> */}
-      <div className="flex flex-1">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <Outlet />
       </div>
     </div>

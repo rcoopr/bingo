@@ -22,14 +22,13 @@ import { assertIsPost } from "~/core/utils/http.server";
 import { createUserAccount } from "~/modules/user/mutations";
 import { getUserByEmail } from "~/modules/user/queries";
 
+import { LOGIN_DEFAULT_REDIRECT } from "../core/auth/const";
 import { SignInWithDiscord } from "../core/components/sign-in-discord";
-
-const redirectPath = "/games";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const authSession = await getAuthSession(request);
 
-  if (authSession) return redirect(redirectPath);
+  if (authSession) return redirect(LOGIN_DEFAULT_REDIRECT);
 
   return json({});
 };
@@ -64,7 +63,11 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const { email, password, redirectTo = redirectPath } = formValidation.data;
+  const {
+    email,
+    password,
+    redirectTo = LOGIN_DEFAULT_REDIRECT,
+  } = formValidation.data;
 
   const existingUser = await getUserByEmail(email);
 

@@ -1,5 +1,6 @@
 import { Link } from "@remix-run/react";
 
+import { LOGIN_DEFAULT_REDIRECT } from "../auth/const";
 import { DiscordIcon } from "./svg";
 
 export const HomeLinks = ({ isAuth }: { isAuth: boolean }) =>
@@ -23,7 +24,7 @@ const LoginLinks = () => (
 const HomeNavLinks = () => (
   // <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0">
   //   <Link
-  //     to="/games"
+  //     to={LOGIN_DEFAULT_REDIRECT}
   //     prefetch="intent"
   //     className="flex items-center justify-center rounded-md border-2 border-cyan-500 px-4 py-3 font-medium text-white hover:text-cyan-500"
   //   >
@@ -40,7 +41,7 @@ const HomeNavLinks = () => (
   <div className="flex flex-col items-center space-y-4">
     {/* <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0"> */}
     <Link
-      to="/dashboard/games"
+      to={LOGIN_DEFAULT_REDIRECT}
       prefetch="intent"
       className="flex items-center justify-center rounded-md border-2 border-cyan-500 px-4 py-3 font-medium text-base-content hover:text-cyan-500"
     >

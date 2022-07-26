@@ -21,3 +21,28 @@ export async function getGameCount({
     },
   });
 }
+
+export async function getActiveGameCount({
+  userId,
+  role,
+}: {
+  userId: string;
+  role?: Player["role"];
+}) {
+  const now = new Date();
+  const roleCondition = role ? { AND: { role } } : {};
+  debugger;
+  return db.game.count({
+    where: {
+      teams: {
+        some: { players: { some: { userId, ...roleCondition } } },
+      },
+      startDate: {
+        lte: now,
+      },
+      endDate: {
+        gte: now,
+      },
+    },
+  });
+}

@@ -38,8 +38,14 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Remix Notes",
   viewport: "width=device-width,initial-scale=1",
+
+  title: "Team Bingo",
+  "og:title": "Team Bingo",
+  description: "Create team-based bingo games with ease!",
+  "og:description": "Create team-based bingo games with ease!",
+  // "og:image:url": "https://remix.run/og-image.png",
+  // "og:image:alt": "Just doin a bunch of hoodrat stuff",
 });
 
 export const action: ActionFunction = async ({ request }) => {
@@ -107,7 +113,7 @@ function App({ ENV }: Partial<LoaderData>) {
         <Toaster position="bottom-right" />
         <SupabaseRealtimeProvider>
           <main className="relative min-h-screen bg-base-100 text-base-content">
-            <div className="absolute bottom-5 right-5 z-10 leading-[0]">
+            <div className="absolute bottom-5 left-5 z-10 leading-[0]">
               <ThemeSwitch />
             </div>
             {/* <div

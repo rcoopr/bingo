@@ -1,5 +1,5 @@
 /**
- * @type {import('@types/eslint').Linter.BaseConfig}
+ * @type {import('eslint').Linter.BaseConfig}
  */
 module.exports = {
   root: true,
@@ -30,7 +30,9 @@ module.exports = {
     "remix.config.js",
     ".cache",
     ".history",
+    "postcss.config.js",
     "tailwind.config.js",
+    "tailwind.plugins.js",
     ".eslintrc.js",
     "vitest.config.ts",
     "cypress",
@@ -73,9 +75,8 @@ module.exports = {
     "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/no-throw-literal": "off", // for CatchBoundaries
     //import
-    "import/no-default-export": "error",
     "import/order": [
-      "error",
+      "warn",
       {
         groups: ["builtin", "external", "internal"],
         pathGroups: [
@@ -121,9 +122,6 @@ module.exports = {
         "./app/entry.server.tsx",
         "./app/routes/**/*.tsx",
       ],
-      rules: {
-        "import/no-default-export": "off",
-      },
     },
   ],
 };

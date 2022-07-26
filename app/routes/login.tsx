@@ -21,14 +21,13 @@ import { createAuthSession, getAuthSession } from "~/core/auth/session.server";
 import { BxLeftArrowAlt, ContinueWithEmailForm } from "~/core/components";
 import { assertIsPost } from "~/core/utils/http.server";
 
+import { LOGIN_DEFAULT_REDIRECT } from "../core/auth/const";
 import { SignInWithDiscord } from "../core/components/sign-in-discord";
-
-const redirectPath = "/games";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const authSession = await getAuthSession(request);
 
-  if (authSession) return redirect(redirectPath);
+  if (authSession) return redirect(LOGIN_DEFAULT_REDIRECT);
 
   return json({});
 };
@@ -63,7 +62,11 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const { email, password, redirectTo = redirectPath } = formValidation.data;
+  const {
+    email,
+    password,
+    redirectTo = LOGIN_DEFAULT_REDIRECT,
+  } = formValidation.data;
 
   const authSession = await signInWithEmail(email, password);
 

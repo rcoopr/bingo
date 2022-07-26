@@ -3,10 +3,16 @@
   --rdp-accent-color: rgba(34, 211, 238, 0.3);
   --rdp-background-color: rgb(15, 23, 42);
   --rdp-background-color-dark: rgb(213, 219, 231); */
-  --rdp-outline: 2px solid rgba(145, 89, 16, 0.6);
+
+  /* --rdp-outline: 2px solid rgba(145, 89, 16, 0.6);
   --rdp-accent-color: rgba(204, 124, 19, 0.5);
-  --rdp-background-color: rgba(204, 124, 19, 0.3);
+  --rdp-background-color: rgba(204, 124, 19, 0.3); */
+  --rdp-outline: 2px solid hsl(var(--in) / 0.6);
+  --rdp-accent-color: hsl(var(--in) / 0.5);
+  --rdp-background-color: hsl(var(--in) / 0.3);
+
   --rdp-outline-selected: none;
+  margin: 0;
 }
 
 .rdp-button {

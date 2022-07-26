@@ -1,11 +1,11 @@
-import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
-import { useLoaderData, Outlet, NavLink, Link } from "@remix-run/react";
-import clsx from "clsx";
+import { json } from "@remix-run/node";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireAuthSession } from "~/core/auth/guards";
 import { notFound } from "~/core/utils/http.server";
 
+import { Sidebar } from "../../core/components/sidebar/sidebar";
 import { getGames } from "../../modules/game/queries";
 
 type LoaderData = {
@@ -35,37 +35,9 @@ export default function GamesPage() {
 
   return (
     <>
-      <div className="flex h-full w-80 flex-col items-center">
-        {/* Sidebar */}
-        <Link to="new" className="btn gap-2">
-          <span>+</span>
-          New Game
-        </Link>
-
-        <hr />
-
-        {data.games.length === 0 ? (
-          <p className="p-4">{data.email} has no games yet</p>
-        ) : (
-          <ol>
-            {data.games.map((game) => (
-              <li key={game.id}>
-                <NavLink
-                  className={({ isActive }) =>
-                    `${clsx("block p-4 text-xl", isActive && "bg-white")}`
-                  }
-                  to={game.id.toString()}
-                >
-                  🎮 {game.title}
-                </NavLink>
-              </li>
-            ))}
-          </ol>
-        )}
-      </div>
-
+      <Sidebar data={data} />
       {/* Main view of dashboard */}
-      <div className="m-3 mt-0 flex flex-1 flex-col rounded-lg rounded-tl-3xl bg-base-300 p-6">
+      <div className="m-3 mt-0 flex flex-1 flex-col overflow-auto rounded-lg rounded-tl-3xl bg-base-300">
         <Outlet />
       </div>
     </>

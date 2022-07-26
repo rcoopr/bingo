@@ -1,5 +1,5 @@
-import type { LoaderFunction, ActionFunction } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
@@ -9,6 +9,8 @@ import type { Game } from "~/core/database";
 import { assertIsDelete } from "~/core/utils/http.server";
 import { deleteGame } from "~/modules/game/mutations";
 import { getGame } from "~/modules/game/queries";
+
+import { GameView } from "../../../core/components/board/game";
 
 type LoaderData = {
   game: Game;
@@ -33,7 +35,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   await deleteGame({ id: Number(params.gameId) });
 
-  return redirect("/games", {
+  return redirect("/dashboard/games", {
     headers: {
       "Set-Cookie": await commitAuthSession(request, { authSession }),
     },
@@ -41,32 +43,16 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function GameDetailsPage() {
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<LoaderData>();
 
   return (
-    <div>
-      <h3 className="text-2xl font-bold">
-        <span className="text-xs">title: </span>
-        {data.game.title}
-      </h3>
-      <p className="py-6">
-        <span className="text-xs">desc: </span>
-        {data.game.description}
-      </p>
-      <p className="py-6">
-        <span className="text-xs">start: </span>
-        {data.game.startDate}
-      </p>
-      <p className="py-6">
-        <span className="text-xs">end: </span>
-        {data.game.endDate}
-      </p>
-      <code>{JSON.stringify(data.game, null, 3)}</code>
-      <hr className="my-4" />
-      <Form method="delete">
+    <div className="flex flex-col gap-4 p-6">
+      <GameView game={data.game} />
+      <div className="divider" />
+      <Form method="delete" className="flex justify-end">
         <button
           type="submit"
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          className="rounded bg-red-500  py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400"
         >
           Delete
         </button>

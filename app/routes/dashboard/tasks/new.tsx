@@ -111,6 +111,7 @@ export default function NewGamePage() {
       descRef.current?.focus();
     }
   }, [actionData]);
+  console.log(dateRange);
 
   return (
     <Form method="post" className="flex w-full flex-col gap-2">

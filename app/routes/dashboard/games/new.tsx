@@ -1,38 +1,60 @@
-import * as React from "react";
-
-import { json, redirect } from "@remix-run/node";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { Form, useActionData, useTransition } from "@remix-run/react";
-import { addDays } from "date-fns";
-import type { DateRange } from "react-day-picker";
-import { getFormData, useFormInputProps } from "remix-params-helper";
+import { redirect } from "@remix-run/node";
+import { useTransition } from "@remix-run/react";
+import { withZod } from "@remix-validated-form/with-zod";
+import { ValidatedForm, validationError } from "remix-validated-form";
 import { z } from "zod";
 
 import { requireAuthSession } from "~/core/auth/guards";
 import { commitAuthSession } from "~/core/auth/session.server";
-import { TextInput, Label, DateRangeSelector } from "~/core/components";
+import { DateRangeSelector } from "~/core/components";
 import { assertIsPost } from "~/core/utils/http.server";
 import { createGame } from "~/modules/game/mutations";
 import customStyles from "~/styles/rdp.css";
 
-const dateSchema = z.preprocess((arg) => {
-  if (typeof arg == "string" || arg instanceof Date) return new Date(arg);
-}, z.date());
+import type { OptimisticGame } from "../../../core/components/board/game";
+import { GameView } from "../../../core/components/board/game";
+import { DatePickerRVF } from "../../../core/components/forms/rvf/date";
+import { InputRVF } from "../../../core/components/forms/rvf/input";
+import { SubmitButtonRVF } from "../../../core/components/forms/rvf/submit";
+import { TextareaRVF } from "../../../core/components/forms/rvf/textarea";
 
-export const NewGameFormSchema = z.object({
-  title: z.string().min(2, "require-title"),
-  description: z.string().optional(),
-  startDate: dateSchema,
-  endDate: dateSchema,
+const dateSchema = z.preprocess((arg) => {
+  if (arg === "" || !arg) return arg;
+  if (typeof arg == "string" || arg instanceof Date) return new Date(arg);
+  return arg;
+}, z.union([z.date(), z.string(), z.undefined()]));
+
+const newGameSchema = z.object({
+  title: z
+    .string()
+    .min(1, { message: "Title is required" })
+    .refine(
+      (val) => val.length < 100,
+      (val) => ({
+        message: `Title is too long (${val.length} / 100 chars)`,
+      })
+    ),
+  description: z
+    .string()
+    .refine(
+      (val) => val.length < 250,
+      (val) => ({
+        message: `Description is too long (${val.length} / 250 chars)`,
+      })
+    )
+    .optional(),
+  date: z.object({
+    from: dateSchema.refine((val) => val instanceof Date, {
+      message: z.ZodIssueCode.invalid_date,
+    }),
+    to: dateSchema,
+  }),
 });
 
-type NewGameFormData = z.infer<typeof NewGameFormSchema>;
+const newGameValidator = withZod(newGameSchema);
 
-type ActionData = {
-  errors?: {
-    [K in keyof NewGameFormData]?: string;
-  };
-};
+export type NewGameFormData = z.infer<typeof newGameSchema>;
 
 export function links() {
   return [
@@ -47,37 +69,40 @@ export function links() {
   ];
 }
 
+export function mapFormDataToGameInput(formData: NewGameFormData) {
+  return {
+    title: formData.title,
+    description: formData.description ?? null,
+    startDate: formData.date.from,
+    endDate:
+      formData.date.to instanceof Date ? formData.date.to : formData.date.from,
+  };
+}
+
 export const action: ActionFunction = async ({ request }) => {
   assertIsPost(request);
 
   const authSession = await requireAuthSession(request);
-  const formValidation = await getFormData(request, NewGameFormSchema);
+  const formValidation = await newGameValidator.validate(
+    await request.formData()
+  );
 
-  if (!formValidation.success) {
-    return json<ActionData>(
-      {
-        errors: formValidation.errors,
-      },
-      {
-        status: 400,
-        headers: {
-          "Set-Cookie": await commitAuthSession(request, { authSession }),
-        },
-      }
-    );
+  if (formValidation.error) {
+    return validationError(formValidation.error);
   }
 
-  const { title, description, startDate, endDate } = formValidation.data;
-
   const game = await createGame({
-    title,
-    description: description ?? null,
-    startDate,
-    endDate,
+    title: formValidation.data.title,
+    description: formValidation.data.description ?? null,
+    startDate: formValidation.data.date.from as Date,
+    endDate:
+      formValidation.data.date.to instanceof Date
+        ? formValidation.data.date.to
+        : (formValidation.data.date.from as Date),
     userId: authSession.userId,
   });
 
-  return redirect(`/games/${game.id}`, {
+  return redirect(`/dashboard/games/${game.id}`, {
     headers: {
       "Set-Cookie": await commitAuthSession(request, { authSession }),
     },
@@ -90,103 +115,124 @@ export const loader: LoaderFunction = async ({ request }) => {
   return null;
 };
 
-const today = new Date();
-const defaultDateRange: DateRange = {
-  from: today,
-  to: addDays(today, 4),
-};
-
 export default function NewGamePage() {
-  const actionData = useActionData() as ActionData;
-  const titleRef = React.useRef<HTMLInputElement>(null);
-  const descRef = React.useRef<HTMLInputElement>(null);
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
-    defaultDateRange
-  );
-  const inputProps = useFormInputProps(NewGameFormSchema);
   const transition = useTransition();
-  const disabled =
-    transition.state === "submitting" || transition.state === "loading";
+  let data: OptimisticGame = {};
 
-  React.useEffect(() => {
-    if (actionData?.errors?.title) {
-      titleRef.current?.focus();
-    } else if (actionData?.errors?.description) {
-      descRef.current?.focus();
-    }
-  }, [actionData]);
+  if (transition.submission?.formData) {
+    const formData = Object.fromEntries(transition.submission.formData);
+    // Form validation provides data in a weird flattened way
+    data = {
+      title: formData.title as string,
+      description: (formData.description ?? null) as string | null,
+      startDate: formData["date.from"] as string,
+      endDate: formData["date.to"] as string,
+    };
+  }
 
   return (
-    <Form
-      method="post"
-      className="flex h-full w-full flex-col gap-2 rounded-lg rounded-tl-3xl bg-slate-200 p-12"
-    >
-      <div className="mb-4">
-        <Label htmlFor="title">Title</Label>
-        <TextInput
-          {...inputProps("title")}
-          ref={titleRef}
-          name="title"
-          id="title"
-          disabled={disabled}
-          error={actionData?.errors?.title}
-        />
-      </div>
-
-      <div className="mb-4">
-        <Label htmlFor="description">Description</Label>
-        <TextInput
-          {...inputProps("description")}
-          ref={descRef}
-          name="description"
-          id="description"
-          disabled={disabled}
-          error={actionData?.errors?.description}
-        />
-        {actionData?.errors?.description && (
-          <div className="pt-1 text-red-700" id="description-error">
-            {actionData.errors.description}
-          </div>
-        )}
-      </div>
-
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <input
-            type="hidden"
-            name="startDate"
-            required={true}
-            value={dateRange?.from?.toDateString()}
-          />
-        </label>
-        <label className="flex w-full flex-col gap-1">
-          <input
-            type="hidden"
-            name="endDate"
-            required={true}
-            value={dateRange?.to?.toDateString()}
-          />
-        </label>
-        <Label htmlFor="date">Date</Label>
-        <div className="w-max rounded-lg bg-white p-3 shadow-sm">
-          <DateRangeSelector range={dateRange} setRange={setDateRange} />
-          {(actionData?.errors?.startDate || actionData?.errors?.endDate) && (
-            <div className="pt-1 text-red-700" id="start-error">
-              {actionData.errors.startDate || actionData.errors.endDate}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="text-right">
-        <button
-          type="submit"
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-          disabled={disabled}
-        >
-          Save
-        </button>
-      </div>
-    </Form>
+    <div className="flex flex-col gap-4 p-6">
+      {transition.submission ? (
+        <GameView game={data} />
+      ) : (
+        <>
+          {/* <NewGameFormTabs /> */}
+          <ValidatedForm
+            validator={newGameValidator}
+            method="post"
+            className="divide-y divide-neutral"
+          >
+            <section className="mx-auto mb-6 max-w-5xl">
+              <h1 className="mt-0 text-2xl font-extralight tracking-wider">
+                New Game Details
+              </h1>
+              <div className="mb-6 flex flex-col gap-6 lg:flex-row">
+                <div className="flex grow flex-col">
+                  <InputRVF name="title" label="Title" />
+                  <TextareaRVF name="description" label="Description" />
+                </div>
+                <div className="mt-9 grid place-items-center">
+                  <div className="rounded-lg bg-base-100 p-4 shadow highlight-t">
+                    <DatePickerRVF name="date" label="Date" />
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section className="mb-6">
+              <h1 className="text-2xl font-extralight tracking-wider">
+                Game Board
+              </h1>
+              <GameView
+                game={{ title: "", startDate: new Date().toDateString() }}
+              />
+            </section>
+            <section className="">
+              <h1 className="text-2xl font-extralight tracking-wider">Teams</h1>
+              <div className="flex flex-wrap gap-2">
+                <div className="flex basis-56 flex-col items-center gap-1 rounded-md border-2 border-base-content/20 p-2">
+                  <InputRVF
+                    name="team-1"
+                    label="Team 1"
+                    inputClass="input-sm"
+                  />
+                  <ul className="mt-2 flex w-full flex-col gap-1 rounded-lg">
+                    <li className="grid place-items-center rounded bg-base-100 px-2 py-1 highlight-t">
+                      Player 1
+                    </li>
+                    <li className="grid place-items-center rounded bg-base-100 px-2 py-1 highlight-t">
+                      Player 2
+                    </li>
+                    <li className="grid place-items-center rounded bg-base-100 px-2 py-1 highlight-t">
+                      Player 3
+                    </li>
+                    <li className="grid place-items-center rounded bg-base-100 px-2 py-1 highlight-t">
+                      Player 4
+                    </li>
+                    <li className="grid place-items-center rounded bg-base-100 px-2 py-1 highlight-t">
+                      Player 5
+                    </li>
+                  </ul>
+                  <button className="btn btn-success btn-xs w-max rounded highlight-t highlight-white/40">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M 6 12 L 18 12 M 12 6 l 0 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div className="basis-28">
+                  <button className="btn btn-lg h-full">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M 6 12 L 18 12 M 12 6 l 0 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <SubmitButtonRVF />
+            </section>
+          </ValidatedForm>
+        </>
+      )}
+    </div>
   );
 }

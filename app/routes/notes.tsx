@@ -3,7 +3,7 @@ import type { LoaderFunction } from "@remix-run/node";
 import { useLoaderData, Outlet, Link, NavLink } from "@remix-run/react";
 
 import { requireAuthSession } from "~/core/auth/guards";
-import { LogoutButton } from "~/core/components";
+// import { LogoutButton } from "~/core/components";
 import { notFound } from "~/core/utils/http.server";
 import { getNotes } from "~/modules/note/queries";
 
@@ -34,15 +34,12 @@ export default function NotesPage() {
           <Link to=".">Notes</Link>
         </h1>
         <p>{data.email}</p>
-        <LogoutButton />
+        {/* <LogoutButton /> */}
       </header>
 
       <main className="flex h-full bg-white">
         <div className="h-full w-80 border-r bg-gray-50">
-          <Link
-            to="new"
-            className="block p-4 text-xl text-blue-500"
-          >
+          <Link to="new" className="block p-4 text-xl text-blue-500">
             + New Note
           </Link>
 

@@ -40,9 +40,9 @@ export default function NoteIndexPage() {
             stroke="currentColor"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
             />
           </svg>
@@ -53,7 +53,7 @@ export default function NoteIndexPage() {
       </div>
 
       {/* Main view of dashboard */}
-      <div className="m-3 mt-0 flex flex-1 flex-col rounded-lg rounded-tl-3xl bg-base-300 p-6">
+      <div className="m-3 mt-0 flex flex-1 flex-col overflow-auto rounded-lg rounded-tl-3xl bg-base-300 p-6">
         <Outlet />
       </div>
     </>
