@@ -4,8 +4,7 @@ import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import toast from "react-hot-toast";
 
 import { requireAuthSession } from "~/core/auth/guards";
-import { useWatchNotes } from "~/modules/note/hooks";
-import { getNoteCount } from "~/modules/note/queries";
+// import { useWatchNotes } from "~/modules/game/hooks"
 
 export const loader: LoaderFunction = async ({ request }) => {
   await requireAuthSession(request);
@@ -23,7 +22,7 @@ export const handle = {
   breadcrumb: () => <Link to="/dashboard">Some Route</Link>,
 };
 
-export default function NoteIndexPage() {
+export default function TasksIndexPage() {
   // const { nbOfNotes } = useLoaderData();
   // useWatchNotes();
 

@@ -1,15 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 import { NODE_ENV } from "../utils/env.server";
-export type {
-  Note,
-  User,
-  Game,
-  Task,
-  Team,
-  Tile,
-  TileTask,
-} from "@prisma/client";
+export type { User, Game, Task, Team, Tile } from "@prisma/client";
 
 let db: PrismaClient;
 

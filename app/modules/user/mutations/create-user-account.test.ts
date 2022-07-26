@@ -6,7 +6,7 @@ import {
   SUPABASE_AUTH_ADMIN_USER_API,
   authSession,
 } from "mocks/handlers";
-import { server } from "mocks/start";
+import { server } from "mocks";
 import { USER_EMAIL, USER_ID, USER_PASSWORD } from "mocks/user";
 import { db } from "~/core/database";
 

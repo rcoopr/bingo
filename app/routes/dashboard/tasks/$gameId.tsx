@@ -1,20 +1,15 @@
-import type { LoaderFunction, ActionFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderArgs } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { Form, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { requireAuthSession } from "~/core/auth/guards";
 import { commitAuthSession } from "~/core/auth/session.server";
-import type { Game } from "~/core/database";
 import { assertIsDelete } from "~/core/utils/http.server";
 import { deleteGame } from "~/modules/game/mutations";
 import { getGame } from "~/modules/game/queries";
 
-type LoaderData = {
-  game: Game;
-};
-
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({ request, params }: LoaderArgs) => {
   await requireAuthSession(request);
   invariant(params.gameId, "gameId not found");
 
@@ -22,7 +17,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!game) {
     throw new Response("Not Found", { status: 404 });
   }
-  return json<LoaderData>({ game });
+  return json({ game });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -41,7 +36,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function GameDetailsPage() {
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<typeof loader>();
 
   return (
     <div>
